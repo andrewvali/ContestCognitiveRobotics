@@ -37,7 +37,7 @@ if __name__ == "__main__":
     ids_folder=os.path.join(os.path.dirname(__file__),'voice_identities')
     out_path = os.path.join(ids_folder, 'embed.pk')
 
-    identities = get_identities(ids_folder)
+    identities = get_identities()
     
     X = []
     y = []
