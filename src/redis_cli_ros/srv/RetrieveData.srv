@@ -1,0 +1,5 @@
+string topic
+---
+bool success
+string error
+string[] output
