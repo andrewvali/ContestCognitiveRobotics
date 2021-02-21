@@ -7,40 +7,53 @@ import time
 import speech_recognition as sr
 from sound_event_detection.srv import SpeechRecognition
 
-rospy.init_node('voice_node', anonymous=True)
-pub = rospy.Publisher('mic_data', Int16MultiArray, queue_size=10)
+###### CONSTANT #######
+SAMPLE_RATE = 16000
+
 #client = rospy.ServiceProxy('sound_event_detection',SpeechRecognition)
 
-# this is called from the background thread
-def callback(recognizer, audio):
-    print("ti ho sentito...")
-    data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
-    data_to_send = Int16MultiArray()
-    data_to_send.data = data
-    #success = client(data_to_send)
-    #if success:
-    pub.publish(data_to_send)
+class Microphone():
+    __slots__ = "pub","r","mic"
 
-def listener():
-    # Initialize a Recognizer
-    r = sr.Recognizer()
+    def __init__(self,topic_mic_data):
+        self.pub = rospy.Publisher(topic_mic_data,Int16MultiArray,queue_size=0)
+        self.listener()
+    
+    # this is called from the background thread
+    def callback(self,recognizer, audio):
+        print("ti ho sentito...")
+        data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
+        data_to_send = Int16MultiArray()
+        data_to_send.data = data
+        #success = client(data_to_send)
+        #if success:
+        self.pub.publish(data_to_send)
+        
+    def listener(self):
+        # Initialize a Recognizer
+        self.r = sr.Recognizer()
+        
+        # Audio source
+        self.mic = sr.Microphone(sample_rate=SAMPLE_RATE)
 
-    # Audio source
-    m = sr.Microphone(sample_rate=16000)
+        # Calibration within the environment
+        # we only need to calibrate once, before we start listening
+        print("Calibrating...")
+        with self.mic as source:
+            self.r.adjust_for_ambient_noise(source)  
+        print("Calibration finished")
 
-    # Calibration within the environment
-    # we only need to calibrate once, before we start listening
-    print("Calibrating...")
-    with m as source:
-        r.adjust_for_ambient_noise(source)  
-    print("Calibration finished")
+        # start listening in the background
+        # `stop_listening` is now a function that, when called, stops background listening
+        print("Recording...")
+        self.r.listen_in_background(self.mic, self.callback)
+        print("cIAO...")
 
-    # start listening in the background
-    # `stop_listening` is now a function that, when called, stops background listening
-    print("Recording...")
-    stop_listening = r.listen_in_background(m, callback)
-    print("cIAO...")
-    rospy.spin()
 
 if __name__ == '__main__':
-    listener()
+    rospy.init_node('voice_node', anonymous=True)
+    microphone = Microphone("mic_data")
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        print("Shutting down")

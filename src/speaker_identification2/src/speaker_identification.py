@@ -31,9 +31,9 @@ class SpeakerReidentification():
         ret[ret > 1] = 1.0
         ret[ret < -1] = -1.
 
-        samplerate = 16000 #costante
-        OUT_PATH=os.path.join(os.path.dirname(__file__),'../test.wav')
-        wavfile.write(OUT_PATH,samplerate,ret)
+        #samplerate = 16000 #costante
+        #OUT_PATH=os.path.join(os.path.dirname(__file__),'../test.wav')
+        #wavfile.write(OUT_PATH,samplerate,ret)
 
         #audio_data = audio_data.data.astype(np.float32, order='C') / 32768.0
 
