@@ -1,0 +1,25 @@
+{
+    "ids": [
+        {
+            "folder": "roberto",
+            "th": 0.5,
+            "name": "Antonio Roberto",
+            "files": [
+                "record_00000.wav",
+                "record_00002.wav",
+                "record_00003.wav",
+                "record_00004.wav",
+                "record_00005.wav"
+            ]
+        },
+        {
+            "folder": "valitutto",
+            "th": 0.5,
+            "name": "Andrea Valitutto",
+            "files": [
+                "record_00000.wav",
+                "record_00001.wav"
+            ]
+        }
+    ]
+}
