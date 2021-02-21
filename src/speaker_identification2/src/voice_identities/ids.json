@@ -1,25 +1,15 @@
 {
     "ids": [
         {
-            "folder": "roberto",
+            "cache_id": "Antonio_Roberto_20201210103012",
             "th": 0.5,
-            "name": "Antonio Roberto",
-            "files": [
-                "record_00000.wav",
-                "record_00002.wav",
-                "record_00003.wav",
-                "record_00004.wav",
-                "record_00005.wav"
-            ]
+            "name": "Antonio Roberto"
         },
         {
-            "folder": "valitutto",
+            "cache_id": "Andrea_Valitutto_20210221160004",
             "th": 0.5,
-            "name": "Andrea Valitutto",
-            "files": [
-                "record_00000.wav",
-                "record_00001.wav"
-            ]
+            "name": "Andrea Valitutto"
+        
         }
     ]
 }

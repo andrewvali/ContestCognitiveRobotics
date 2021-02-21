@@ -1,1 +1,2 @@
+/home/mivia/cogaudio2_ws/ContestCognitiveRobotics/devel/./cmake.lock 20
 /home/andrew/Desktop/ContestCognitiveRobotics/devel/./cmake.lock 6
