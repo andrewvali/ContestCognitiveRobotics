@@ -16,12 +16,13 @@ class Microphone():
     __slots__ = "pub","r","mic"
 
     def __init__(self,topic_mic_data):
+        print("Publisher to 'mic_data' topic...")
         self.pub = rospy.Publisher(topic_mic_data,Int16MultiArray,queue_size=0)
         self.listener()
     
     # this is called from the background thread
     def callback(self,recognizer, audio):
-        print("ti ho sentito...")
+        print("Audio Captured by the microphone!")
         data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
         data_to_send = Int16MultiArray()
         data_to_send.data = data
@@ -47,7 +48,7 @@ class Microphone():
         # `stop_listening` is now a function that, when called, stops background listening
         print("Recording...")
         self.r.listen_in_background(self.mic, self.callback)
-        print("cIAO...")
+        
 
 
 if __name__ == '__main__':

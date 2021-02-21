@@ -11,19 +11,29 @@ from identification.deep_speaker.model import get_deep_speaker
 from identification.utils import batch_cosine_similarity, dist2id
 from scipy.io import wavfile
 
+######### PATH OF THE MODEL #########
 SPEAKER_PATH=os.path.join(os.path.dirname(__file__),'deep_speaker.h5')
+######### PATH OF THE EMBEDDING FILE #########
 EMBED_PATH=os.path.join(os.path.dirname(__file__),'voice_identities')
+######### CONSTANT #########
 RATE = 16000
 
 class SpeakerReidentification():
     
-    def __init__(self,topic_microphone,topic_result):
-        rospy.loginfo("Subscribing to topic %s", topic_microphone)
-        self.microphone_sub = rospy.Subscriber(topic_microphone, Int16MultiArray, self.callback)
+    def __init__(self,stream_audio_topic,topic_result):
+        rospy.loginfo("Subscribing to topic %s", stream_audio_topic)
+        self.microphone_sub = rospy.Subscriber(stream_audio_topic, Int16MultiArray, self.callback)
         self.model = get_deep_speaker(SPEAKER_PATH)
         self.result_pub = rospy.Publisher(topic_result,String,queue_size=0)
     
     def callback(self,audio_data):
+        """Tis callback is called when a message on 'stream_audio_topic' is received. 
+           It's perfrmed the speaker identification of the audio received and the result is 
+           published on 'topic_result' topic.
+
+        Args:
+            audio_data ([type]): [description]
+        """
         # Conversion to float32
         
         ret = np.array(audio_data.data).astype(np.float32)
