@@ -39,7 +39,7 @@ class NewIdentityHandler():
                 if value.lower() == "yes":
                     full_name = input("Insert full name: ")
                     rospy.wait_for_service('create_new_identity')
-                    print(type(full_name))
+                 
                     try:
                         data_save = rospy.ServiceProxy('create_new_identity', NewIdentity)
                         resp = data_save(full_name)
@@ -55,7 +55,7 @@ class NewIdentityHandler():
                         return False,resp.error
 
                     audio = serialize_audio(np.array(req.audio.data).astype(np.int16))
-
+                    rospy.wait_for_service('store_data_append')
                     try:
                         audio_save = rospy.ServiceProxy('store_data_append', StoreData)
                         
