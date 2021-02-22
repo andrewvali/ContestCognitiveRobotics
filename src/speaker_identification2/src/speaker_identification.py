@@ -10,6 +10,8 @@ from identification.deep_speaker.audio import get_mel
 from identification.deep_speaker.model import get_deep_speaker
 from identification.utils import batch_cosine_similarity, dist2id
 from scipy.io import wavfile
+from dynamic_db_pkg.srv import *
+from std_msgs.msg import String
 
 ######### PATH OF THE MODEL #########
 SPEAKER_PATH=os.path.join(os.path.dirname(__file__),'deep_speaker.h5')
@@ -25,6 +27,7 @@ class SpeakerReidentification():
         self.microphone_sub = rospy.Subscriber(stream_audio_topic, Int16MultiArray, self.callback)
         self.model = get_deep_speaker(SPEAKER_PATH)
         self.result_pub = rospy.Publisher(topic_result,String,queue_size=0)
+        self.client = rospy.ServiceProxy('manage_audio_identity_error',ManageAudioIndentityError)
     
     def callback(self,audio_data):
         """Tis callback is called when a message on 'stream_audio_topic' is received. 
@@ -69,15 +72,25 @@ class SpeakerReidentification():
         # Matching
         id_label = dist2id(cos_dist, y, ths, mode='avg')
 
+        self.result_pub.publish(id_label)
         
         # Rejection
         if id_label is None:
+            print("Person not reognized!")
             id_label = "?"
-        
-        self.result_pub.publish(id_label)
-        
-        
-        
+            rospy.wait_for_service('manage_audio_identity_error')
+            self.microphone_sub.unregister()
+            try:
+                resp = self.client.call(String(id_label),audio_data)
+                if not resp.success:
+                    print("Warning: Can not handle identity error.")
+            except rospy.ServiceException as e:
+                print("Service call failed: %s"%e)
+            finally:
+                self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback)
+        else:
+            print("Person reognized " + id_label)
+
 
 if __name__ == '__main__':
     rospy.init_node('speaker_reidentification', anonymous=True)

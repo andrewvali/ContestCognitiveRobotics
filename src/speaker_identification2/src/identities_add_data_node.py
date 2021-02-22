@@ -2,40 +2,40 @@
 import os
 import rospy
 from identification.utils import *
-from identification.identities_mng import set_new_identity,get_identities
+from identification.identities_mng import *
 from speaker_identification2.srv import *
 
 class CliRedisService():
 
+    __slots__ = 'server'
     def __init__(self):
         
        
         #NewIdentity
-        rospy.Service('create_new_identity', NewIdentity, self.create_new_identity )
+        self.server = rospy.Service('create_new_identity', NewIdentity, self.create_new_identity )
 
     def create_new_identity(self, request):
-        print("Adding '"+request.name+"'...")
+        #print("Adding '"+request.name+"'...")
+        print("Adding ")
         
         try:
-            set_new_identity(request.name,get_identities())
+            cache_id = get_cache_id(request.name)
+            set_new_identity(cache_id,request.name,get_identities())
             success = True
             error = ""
         except Exception as e:
             success = False
             error = e
 
-        return success, error
+        return success, error, cache_id
             
-        
-
-    
 
 
 if __name__ == '__main__':
     rospy.init_node('identities_add_data_node', anonymous=True)
-
-
-
     minimal_service = CliRedisService()
 
-    rospy.spin()
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        print("Shutting down")

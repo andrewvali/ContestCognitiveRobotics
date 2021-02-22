@@ -62,10 +62,10 @@ def get_cache_id(name):
 
     return name+"_"+date
 
-def set_new_identity(new_name,ids=[],th=0.5):
+def set_new_identity(cache_id,new_name,ids=[],th=0.5):
     new_ids = {}
 
-    identity = {"cache_id":get_cache_id(new_name),"th":th,"name":new_name}
+    identity = {"cache_id":cache_id,"th":th,"name":new_name}
     ids.append(identity)
     new_ids["ids"] = ids
 
