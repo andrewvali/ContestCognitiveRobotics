@@ -8,10 +8,11 @@ import pickle
 import os 
 from identification.deep_speaker.audio import get_mel
 from identification.deep_speaker.model import get_deep_speaker
-from identification.utils import batch_cosine_similarity, dist2id
+from identification.utils import *
 from scipy.io import wavfile
 from dynamic_db_pkg.srv import *
 from std_msgs.msg import String
+from redis_cli_ros.srv import *
 
 ######### PATH OF THE MODEL #########
 SPEAKER_PATH=os.path.join(os.path.dirname(__file__),'deep_speaker.h5')
@@ -70,7 +71,7 @@ class SpeakerReidentification():
         cos_dist = batch_cosine_similarity(X, emb_voice)
         
         # Matching
-        id_label = dist2id(cos_dist, y, ths, mode='avg')
+        id_label,max_score = dist2id(cos_dist, y, ths, mode='avg')
 
         self.result_pub.publish(id_label)
         
@@ -89,7 +90,18 @@ class SpeakerReidentification():
             finally:
                 self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback)
         else:
-            print("Person reognized " + id_label)
+            print("Person recognized " + id_label)
+            print("Score: " + str(max_score))
+            if max_score >= 0.73:
+                print("Score >= 0.73, this audio is to be stored in db.")
+                audio = serialize_audio(np.array(audio_data.data).astype(np.int16))
+                rospy.wait_for_service('store_data_append')
+                try:
+                    audio_save = rospy.ServiceProxy('store_data_append', StoreData)                        
+                    resp = audio_save(id_label,audio)
+                except rospy.ServiceException as e:
+                    print("Service call failed: %s"%e)
+                    
 
 
 if __name__ == '__main__':

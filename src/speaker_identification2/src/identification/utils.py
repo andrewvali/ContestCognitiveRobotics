@@ -136,7 +136,7 @@ def dist2id(distance, y, ths, norm=False, mode='avg', filter_under_th=True):
         ths = ths[idx]
 
         if d.shape[0] == 0:
-            return None
+            return None,None
 
     if norm:
         # norm in case of different thresholds
@@ -154,4 +154,5 @@ def dist2id(distance, y, ths, norm=False, mode='avg', filter_under_th=True):
             ids_prob.append(np.min(d[y == i]))
 
     ids_prob = np.array(ids_prob)
-    return ids[np.argmax(ids_prob)]
+    id_max = np.argmax(ids_prob)
+    return ids[id_max] ,ids_prob[id_max]
