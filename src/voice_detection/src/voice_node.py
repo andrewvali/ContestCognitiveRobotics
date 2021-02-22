@@ -10,8 +10,6 @@ from sound_event_detection.srv import SpeechRecognition
 ###### CONSTANT #######
 SAMPLE_RATE = 16000
 
-#client = rospy.ServiceProxy('sound_event_detection',SpeechRecognition)
-
 class Microphone():
     __slots__ = "pub","r","mic"
 
@@ -26,8 +24,7 @@ class Microphone():
         data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
         data_to_send = Int16MultiArray()
         data_to_send.data = data
-        #success = client(data_to_send)
-        #if success:
+        
         self.pub.publish(data_to_send)
         
     def listener(self):
@@ -49,7 +46,7 @@ class Microphone():
         print("Recording...")
         self.r.listen_in_background(self.mic, self.callback)
         
-
+###### MAIN #######
 
 if __name__ == '__main__':
     rospy.init_node('voice_node', anonymous=True)

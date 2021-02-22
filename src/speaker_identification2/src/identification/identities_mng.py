@@ -80,21 +80,19 @@ def get_identities():
 
     return json_file["ids"]
 
-'''def get_identities(ids_folder, read_file, id_file_name='ids.json'):
-
-    ids_file = os.path.join(ids_folder, id_file_name)
-
-    json_file = get_json(ids_file)
-
-    X = []
-    y = []
-    ths = []
-
-    for id in json_file['ids']:
-        for file in id['files']:
-            file_path = os.path.join(ids_folder, id['folder'], file)
-            X.append(read_file(file_path))
-            y.append(id['name'])
-            ths.append(id['th'])
-
-    return X, y, ths'''
+def get_first_date(id):
+    date = dict()
+    temp = id.split("_")
+    name = temp[0:-1]
+    temp = temp[-1]
+    date["year"] = temp[0:4]
+    date["month"] = temp[4:6]
+    date["day"] = temp[6:8]
+    date["hour"] = temp[8:10]
+    date["minute"] = temp[10:12]
+    date["second"] = temp[12:14]
+    date["date"] = date["day"]+"/"+date["month"]+"/"+date["year"]
+    date["time"] = date["hour"] + ":" + date["minute"] + ":" + date["second"]
+    date["datetime"] = date["date"] +"-"+ date["time"]
+    d = da(year = int(date["year"]),month= int(date["month"]),day =int(date["day"]))
+    return date,d," ".join(name)

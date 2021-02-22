@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
 import os
 import rospy
 from identification.utils import *
 from identification.identities_mng import *
 from speaker_identification2.srv import *
 
-class CliRedisService():
+class StoreAudioService():
 
     __slots__ = 'server'
     def __init__(self):
@@ -30,12 +29,13 @@ class CliRedisService():
         return success, error, cache_id
             
 
-
+'''
 if __name__ == '__main__':
     rospy.init_node('identities_add_data_node', anonymous=True)
-    minimal_service = CliRedisService()
+    minimal_service = SoreAudioService()
 
     try:
         rospy.spin()
     except KeyboardInterrupt:
         print("Shutting down")
+'''

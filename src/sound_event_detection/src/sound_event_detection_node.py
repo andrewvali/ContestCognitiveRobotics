@@ -39,6 +39,7 @@ class SoundEventDetection():
         print("Subscribing to %s topic",topic_mic)
         self.mic_sub = rospy.Subscriber(topic_mic, Int16MultiArray, self.speech_recognition)
         self.model = YAMNet(weights=PATH_TO_MODEL)
+        print("Publisher to %s topic",topic_reidentification)
         self.reidentification_pub=rospy.Publisher(topic_reidentification,Int16MultiArray,queue_size=10)        
     
     def speech_recognition(self, audio):
@@ -56,9 +57,9 @@ class SoundEventDetection():
         ret[ret > 1] = 1.0
         ret[ret < -1] = -1.
 
+        # Split audio in chunks
         stream_in_chunk = int(len(ret)/len(ret[:CHUNK]))
-        
-       
+               
         stream_augumented = np.array([])
 
         for i in range(0,stream_in_chunk):
@@ -67,17 +68,21 @@ class SoundEventDetection():
 
             prediction = self.model.predict(np.expand_dims(data,0))[0]
             max_probability = max(np.expand_dims(prediction[yamnet_classes_id],-1))
-            if max_probability == prediction[yamnet_classes_id[0]]:
-                stream_augumented = np.append(stream_augumented,audio.data[i*CHUNK:(i*CHUNK)+CHUNK])
-        
+
+            for i in range(0,23):
+                if max_probability == prediction[yamnet_classes_id[i]]:
+                    stream_augumented = np.append(stream_augumented,audio.data[i*CHUNK:(i*CHUNK)+CHUNK])
+                    break
+
+        # stream_augumented is audio with only human speeching
         if len(stream_augumented) !=0:
-            print("Speech")
+            print("Recognized human speech or vocal activity")
             data_to_send = Int16MultiArray()
             data_to_send.data = np.array(stream_augumented).astype(np.int16)
            
             self.reidentification_pub.publish(data_to_send)
         else:
-            print("No Speech")
+            print("Unrecognized vocal activity")
             
         
 
@@ -85,7 +90,7 @@ class SoundEventDetection():
 
 if __name__ == '__main__':
     rospy.init_node("sound_event_detection")
-    im = SoundEventDetection('mic_data','stream_audio_topic')
+    sound_event_detection = SoundEventDetection('mic_data','stream_audio_topic')
     try:
         rospy.spin()
     except KeyboardInterrupt:

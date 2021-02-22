@@ -13,6 +13,8 @@ from scipy.io import wavfile
 from dynamic_db_pkg.srv import *
 from std_msgs.msg import String
 from redis_cli_ros.srv import *
+from identification.identities_mng import *
+from identities_add_data import StoreAudioService
 
 ######### PATH OF THE MODEL #########
 SPEAKER_PATH=os.path.join(os.path.dirname(__file__),'deep_speaker.h5')
@@ -20,6 +22,8 @@ SPEAKER_PATH=os.path.join(os.path.dirname(__file__),'deep_speaker.h5')
 EMBED_PATH=os.path.join(os.path.dirname(__file__),'voice_identities')
 ######### CONSTANT #########
 RATE = 16000
+######### STORE AUDIO DATA SERVICE #########
+IDENTITY_ADD = StoreAudioService()
 
 class SpeakerReidentification():
     
@@ -27,7 +31,9 @@ class SpeakerReidentification():
         rospy.loginfo("Subscribing to topic %s", stream_audio_topic)
         self.microphone_sub = rospy.Subscriber(stream_audio_topic, Int16MultiArray, self.callback)
         self.model = get_deep_speaker(SPEAKER_PATH)
+        rospy.loginfo("Publisher to topic %s", topic_result)
         self.result_pub = rospy.Publisher(topic_result,String,queue_size=0)
+        rospy.loginfo("Service client to service manage_audio_identity_error")
         self.client = rospy.ServiceProxy('manage_audio_identity_error',ManageAudioIndentityError)
     
     def callback(self,audio_data):
@@ -36,7 +42,7 @@ class SpeakerReidentification():
            published on 'topic_result' topic.
 
         Args:
-            audio_data ([type]): [description]
+            audio_data (std_msgs/Int16MultiArray): audio received from sound event detection
         """
         # Conversion to float32
         
@@ -44,12 +50,6 @@ class SpeakerReidentification():
         ret /= 32768
         ret[ret > 1] = 1.0
         ret[ret < -1] = -1.
-
-        #samplerate = 16000 #costante
-        #OUT_PATH=os.path.join(os.path.dirname(__file__),'../test.wav')
-        #wavfile.write(OUT_PATH,samplerate,ret)
-
-        #audio_data = audio_data.data.astype(np.float32, order='C') / 32768.0
 
         # Processing
         ukn = get_mel(ret, RATE)
@@ -71,13 +71,13 @@ class SpeakerReidentification():
         cos_dist = batch_cosine_similarity(X, emb_voice)
         
         # Matching
-        id_label,max_score = dist2id(cos_dist, y, ths, mode='avg')
+        id_label,max_score,th_max = dist2id(cos_dist, y, ths, mode='avg')
 
         self.result_pub.publish(id_label)
         
         # Rejection
         if id_label is None:
-            print("Person not reognized!")
+            print("Person not recognized!")
             id_label = "?"
             rospy.wait_for_service('manage_audio_identity_error')
             self.microphone_sub.unregister()
@@ -90,18 +90,17 @@ class SpeakerReidentification():
             finally:
                 self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback)
         else:
-            print("Person recognized " + id_label)
-            print("Score: " + str(max_score))
-            if max_score >= 0.73:
-                print("Score >= 0.73, this audio is to be stored in db.")
+            date,_,name = get_first_date(id_label)
+            print("Person recognized {}. We met first time {} at {}".format(name.upper(),date["date"],date["time"]))
+            print("Score: {}".format(max_score))
+            save_score = th_max+0.08
+
+            if save_score > 1:
+                save_score = 0.99
+            if max_score >= save_score:
+                print("Score >= {}, this audio is to be stored in db.".format(save_score))
                 audio = serialize_audio(np.array(audio_data.data).astype(np.int16))
-                rospy.wait_for_service('store_data_append')
-                try:
-                    audio_save = rospy.ServiceProxy('store_data_append', StoreData)                        
-                    resp = audio_save(id_label,audio)
-                except rospy.ServiceException as e:
-                    print("Service call failed: %s"%e)
-                    
+                append_audio(id_label,audio)
 
 
 if __name__ == '__main__':

@@ -93,12 +93,10 @@ def append_audio(cache_id,audio):
     except rospy.ServiceException as e:
         error = "Impossible audio append ERROR: Service call failed: %s"%e
         print(error)
-        raise Exception(error)
 
     if not resp.success:
         error = "Impossible audio append, ERROR: "+ resp.error
         print(error)
-        raise Exception(error)
 
     
 
@@ -136,13 +134,14 @@ def dist2id(distance, y, ths, norm=False, mode='avg', filter_under_th=True):
         ths = ths[idx]
 
         if d.shape[0] == 0:
-            return None,None
+            return None,None,None
 
     if norm:
         # norm in case of different thresholds
         d = (d - ths)/(1-ths)
 
     ids = list(set(y.tolist()))
+    ths = list(set(ths.tolist()))
 
     ids_prob = []
     for i in ids:
@@ -155,4 +154,4 @@ def dist2id(distance, y, ths, norm=False, mode='avg', filter_under_th=True):
 
     ids_prob = np.array(ids_prob)
     id_max = np.argmax(ids_prob)
-    return ids[id_max] ,ids_prob[id_max]
+    return ids[id_max] ,ids_prob[id_max], ths[id_max]

@@ -3,8 +3,6 @@ import rospy
 import time
 import redis
 from redis_cli_ros.srv import *
-#RetrieveDataList
-
 
 class CliRedisService():
 
@@ -32,7 +30,7 @@ class CliRedisService():
             error = ""
         except Exception as ex:
             success = False
-            error = str(ex) #da migliorare
+            error = str(ex)
         finally:
             print("success: "+str(success)+" , error: "+ error)
             return success, error
@@ -48,7 +46,7 @@ class CliRedisService():
             error = ""
         except Exception as ex:
             success = False
-            error = str(ex) #da migliorare
+            error = str(ex)
         finally:
             print("success: "+str(success)+" , error: "+ error)
             return success, error
@@ -74,7 +72,7 @@ class CliRedisService():
         except Exception as ex:
             success = False
            
-            error = str(ex) #da migliorare
+            error = str(ex)
         finally:
             print("success: "+str(success)+" , error: "+ error)
             return success, error,output
@@ -98,7 +96,7 @@ class CliRedisService():
         except Exception as ex:
             success = False
            
-            error = str(ex) #da migliorare
+            error = str(ex)
         finally:
             print("success: "+str(success)+" , error: "+ error)
             return success, error,output
@@ -106,9 +104,9 @@ class CliRedisService():
 
 if __name__ == '__main__':
     rospy.init_node('redis_cli_node', anonymous=True)
-
-
-
     minimal_service = CliRedisService()
-
-    rospy.spin()
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        print("Shutting down")
+    

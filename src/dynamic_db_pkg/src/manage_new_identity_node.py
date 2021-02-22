@@ -30,8 +30,6 @@ class NewIdentityHandler():
         self.server = rospy.Service(service, ManageAudioIndentityError, self.callback)
         
     def callback(self, req):
-        print(req.person)
-
         if req.person.data == "?":
             print('Unrecognized person. Do you want add a new identity? Yes or Not')
             value = input()
