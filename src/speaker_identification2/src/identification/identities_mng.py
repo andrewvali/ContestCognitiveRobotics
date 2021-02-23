@@ -6,18 +6,13 @@ from datetime import date as da
 import rospy
 from redis_cli_ros.srv import *
 
-def get_json():
-
-   # with open(path) as json_file:
-    #    data = json.load(json_file)
-
-    #return data
+def get_json(name_file):
 
     rospy.wait_for_service('retrieve_data')
     try:
         response = rospy.ServiceProxy('retrieve_data', RetrieveData)
-        data = response("identities")
-
+        data = response(name_file)
+        print(data.output[0])
     except rospy.ServiceException as e:
         error = "Impossible json identities retrieval ERROR: Service call failed: "+e
         print(error)
@@ -26,17 +21,23 @@ def get_json():
     
     
     if not data.success:
-        error = "Impossible json identities retrieval ERROR: "+ data.error
+        error = "WARNING: Impossible json identities retrieval ERROR: "+ data.error
         print(error)
-        raise Exception(error)
+
   
-    return json.loads(data.output[0])
+    try:
+        json_file = json.loads(data.output[0])
+    except Exception as ex:
+        error = "WARNING: no json configuration has been found "+ str(ex)
+        print(error)
+        json_file = dict()
+        json_file["ids"] = []
+    return json_file
 
 
 
 def print_json(json_data):
-  #  with open(path,"w") as json_file:
-   #     json.dump(json_data,json_file)
+
     rospy.wait_for_service('store_data')
     try:
         data_append = rospy.ServiceProxy('store_data', StoreData)
@@ -73,8 +74,8 @@ def set_new_identity(cache_id,new_name,ids=[],th=0.65):
 
 def get_identities():
     
-  #  ids_file = os.path.join(ids_folder, id_file_name)
-    json_file = get_json()
+ 
+    json_file = get_json("identities")
 
     print(json_file)
 
