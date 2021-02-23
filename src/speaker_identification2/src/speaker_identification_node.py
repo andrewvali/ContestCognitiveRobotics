@@ -89,7 +89,7 @@ class SpeakerReidentification():
             try:
                 resp = self.client.call(String(id_label),audio_data)
                 if not resp.success:
-                    print("Warning: Can not handle identity error.")
+                    print(resp.error)
             except rospy.ServiceException as e:
                 print("Service call failed: %s"%e)
             finally:
