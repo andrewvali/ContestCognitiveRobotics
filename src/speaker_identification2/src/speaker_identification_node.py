@@ -15,6 +15,7 @@ from std_msgs.msg import String
 from redis_cli_ros.srv import *
 from identification.identities_mng import *
 from identities_add_data import StoreAudioService
+from prep_voice_embeddings import CreateEmbedding
 
 ######### PATH OF THE MODEL #########
 SPEAKER_PATH=os.path.join(os.path.dirname(__file__),'deep_speaker.h5')
@@ -24,6 +25,8 @@ EMBED_PATH=os.path.join(os.path.dirname(__file__),'voice_identities')
 RATE = 16000
 ######### STORE AUDIO DATA SERVICE #########
 IDENTITY_ADD = StoreAudioService()
+######### AUDIO EMBEDDING CREATOR SERVICE #########
+EMBEDDING_CREATOR = CreateEmbedding()
 
 class SpeakerReidentification():
     
@@ -35,6 +38,8 @@ class SpeakerReidentification():
         self.result_pub = rospy.Publisher(topic_result,String,queue_size=0)
         rospy.loginfo("Service client to service manage_audio_identity_error")
         self.client = rospy.ServiceProxy('manage_audio_identity_error',ManageAudioIndentityError)
+        EMBEDDING_CREATOR.create_new_embedding()
+
     
     def callback(self,audio_data):
         """Tis callback is called when a message on 'stream_audio_topic' is received. 
@@ -89,6 +94,7 @@ class SpeakerReidentification():
                 print("Service call failed: %s"%e)
             finally:
                 self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback)
+                EMBEDDING_CREATOR.create_new_embedding()
         else:
             date,_,name = get_first_date(id_label)
             print("Person recognized {}. We met first time {} at {}".format(name.upper(),date["date"],date["time"]))
@@ -101,6 +107,7 @@ class SpeakerReidentification():
                 print("Score >= {}, this audio is to be stored in db.".format(save_score))
                 audio = serialize_audio(np.array(audio_data.data).astype(np.int16))
                 append_audio(id_label,audio)
+     
 
 
 if __name__ == '__main__':
