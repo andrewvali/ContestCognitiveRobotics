@@ -70,6 +70,12 @@ class NewIdentityHandler():
                         
                         resp = audio_save(cache_id,audio)
 
+                        rospy.wait_for_service('create_embedding')
+                        try:
+                            rospy.ServiceProxy('create_embedding', NewIdentity)
+                        except Exception as ex:
+                            print("WARNING: "+str(ex))
+
                     except rospy.ServiceException as e:
                         success = False
                         error = "ERROR: " + e

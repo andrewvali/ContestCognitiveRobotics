@@ -27,15 +27,3 @@ class StoreAudioService():
             error = e
 
         return success, error, cache_id
-            
-
-'''
-if __name__ == '__main__':
-    rospy.init_node('identities_add_data_node', anonymous=True)
-    minimal_service = SoreAudioService()
-
-    try:
-        rospy.spin()
-    except KeyboardInterrupt:
-        print("Shutting down")
-'''

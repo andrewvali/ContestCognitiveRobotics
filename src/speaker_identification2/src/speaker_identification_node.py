@@ -94,7 +94,7 @@ class SpeakerReidentification():
                 print("Service call failed: %s"%e)
             finally:
                 self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback)
-                EMBEDDING_CREATOR.create_new_embedding()
+
         else:
             date,_,name = get_first_date(id_label)
             print("Person recognized {}. We met first time {} at {}".format(name.upper(),date["date"],date["time"]))
