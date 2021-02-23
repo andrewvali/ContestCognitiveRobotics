@@ -58,7 +58,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
    FILES
    NewIdentity.srv
-#   Service2.srv
+   CreateAudioEmbedding.srv
 )
 
 ## Generate actions in the 'action' folder
