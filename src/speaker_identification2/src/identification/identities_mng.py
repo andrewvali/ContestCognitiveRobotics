@@ -12,7 +12,6 @@ def get_json(name_file):
     try:
         response = rospy.ServiceProxy('retrieve_data', RetrieveData)
         data = response(name_file)
-        print(data.output[0])
     except rospy.ServiceException as e:
         error = "Impossible json identities retrieval ERROR: Service call failed: "+e
         print(error)
@@ -63,7 +62,7 @@ def get_cache_id(name):
 
     return name+"_"+date
 
-def set_new_identity(cache_id,new_name,ids=[],th=0.65):
+def set_new_identity(cache_id,new_name,ids=[],th=0.60):
     new_ids = {}
 
     identity = {"cache_id":cache_id,"th":th,"name":new_name}

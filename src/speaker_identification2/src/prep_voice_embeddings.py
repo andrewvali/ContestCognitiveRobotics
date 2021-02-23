@@ -39,7 +39,7 @@ class CreateEmbedding():
             cache_id = identity["cache_id"]
             th = identity["th"]
             audio = retrieve_audio(cache_id)
-            print("TIPO: "+str(type(audio[0])))
+            print("Number audios: {}".format(len(audio)))
             X = X + audio
             y = y + [cache_id]*len(audio)
             ths = ths + [float(th)]*len(audio)

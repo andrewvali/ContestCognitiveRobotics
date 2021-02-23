@@ -31,6 +31,7 @@ EMBEDDING_CREATOR = CreateEmbedding()
 class SpeakerReidentification():
     
     def __init__(self,stream_audio_topic,topic_result):
+        EMBEDDING_CREATOR.create_new_embedding()
         rospy.loginfo("Subscribing to topic %s", stream_audio_topic)
         self.microphone_sub = rospy.Subscriber(stream_audio_topic, Int16MultiArray, self.callback)
         self.model = get_deep_speaker(SPEAKER_PATH)
@@ -38,7 +39,6 @@ class SpeakerReidentification():
         self.result_pub = rospy.Publisher(topic_result,String,queue_size=0)
         rospy.loginfo("Service client to service manage_audio_identity_error")
         self.client = rospy.ServiceProxy('manage_audio_identity_error',ManageAudioIndentityError)
-        EMBEDDING_CREATOR.create_new_embedding()
 
     
     def callback(self,audio_data):
@@ -90,6 +90,8 @@ class SpeakerReidentification():
                 resp = self.client.call(String(id_label),audio_data)
                 if not resp.success:
                     print(resp.error)
+                else:
+                    EMBEDDING_CREATOR.create_new_embedding()
             except rospy.ServiceException as e:
                 print("Service call failed: %s"%e)
             finally:
@@ -99,14 +101,24 @@ class SpeakerReidentification():
             date,_,name = get_first_date(id_label)
             print("Person recognized {}. We first met time {} at {}".format(name.upper(),date["date"],date["time"]))
             print("Score: {}".format(max_score))
-            save_score = th_max+0.1
+            save_score = th_max+0.15
 
             if save_score > 1:
                 save_score = 0.99
             if max_score >= save_score:
-                print("Score >= {}, this audio is to be stored in db.".format(save_score))
-                audio = serialize_audio(np.array(audio_data.data).astype(np.int16))
-                append_audio(id_label,audio)
+                rospy.wait_for_service('manage_audio_identity_error')
+                self.microphone_sub.unregister()
+                try:
+                    resp = self.client.call(String(id_label),audio_data)
+                    if not resp.success:
+                        print(resp.error)
+                except rospy.ServiceException as e:
+                    print("Service call failed: %s"%e)
+                finally:
+                    self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback)
+                    print("Score >= {}, this audio is to be stored in db.".format(save_score))
+                    audio = serialize_audio(np.array(audio_data.data).astype(np.int16))
+                    append_audio(id_label,audio)
      
 
 

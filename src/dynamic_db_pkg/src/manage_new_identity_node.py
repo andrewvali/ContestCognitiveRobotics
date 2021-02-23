@@ -68,13 +68,6 @@ class NewIdentityHandler():
                         audio_save = rospy.ServiceProxy('store_data_append', StoreData)
                         
                         resp = audio_save(cache_id,audio)
-
-                        rospy.wait_for_service('create_embedding')
-                        try:
-                            rospy.ServiceProxy('create_embedding', NewIdentity)
-                        except Exception as ex:
-                            print("WARNING: "+str(ex))
-
                     except rospy.ServiceException as e:
                         success = False
                         error = "ERROR: " + e
@@ -87,8 +80,7 @@ class NewIdentityHandler():
                     return True, ""
                    
                 elif value.lower() == "no":
-                    print("Person not added!")
-                    return True, ""
+                    return False, "Person not added!"
                 else:
                     print("Person not added!")
                     return False, "Warning: I don't undestand!"
@@ -96,7 +88,39 @@ class NewIdentityHandler():
                 print("Person not added!")
                 return False, "Warning: Time out"
         else:
-            return False, "Error: Not implemented yet!"
+            print('Do you want to add a new audio? Yes or Not')
+            
+            value = None
+            print("You have five seconds to answer!")
+            i, o, e = select.select( [sys.stdin], [], [], 5 )
+            if (i):
+                value = sys.stdin.readline().strip()
+            else:
+                print("You said nothing!")
+            
+            if value is not None and value.lower() == "yes":
+                audio = serialize_audio(np.array(req.audio.data).astype(np.int16))
+                rospy.wait_for_service('store_data_append')
+                try:
+                    audio_save = rospy.ServiceProxy('store_data_append', StoreData)
+                    
+                    resp = audio_save(req.person.data,audio)
+                except rospy.ServiceException as e:
+                    success = False
+                    error = "ERROR: " + e
+                    print("Service call failed: %s"%e)
+                    return success,error
+                if resp.success:
+                    print("Audio added!")
+                else:
+                    return False,resp.error
+                return True, ""
+
+
+            elif value.lower() == "no":
+                return False, "Audio not added!"
+            else:
+                return False, "Warning: I don't undestand!"
         
 
 
