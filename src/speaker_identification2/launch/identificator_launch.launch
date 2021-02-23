@@ -1,7 +1,7 @@
 <launch>
     
     <node name="speaker_identification_pkg" pkg="speaker_identification2" type="speaker_identification_node.py" output="screen"/>
-    <node name="sound_event_detection_pkg" pkg="sound_event_detection" type="voice_event_detection_node.py"/>
+    <node name="sound_event_detection_pkg" pkg="sound_event_detection" type="voice_activity_detection_node.py"/>
 
     <node name="dynamic_db" pkg="dynamic_db_pkg" type="manage_new_identity_node.py" output="screen"/>
     <node name="microphone_pkg" pkg="voice_detection" type="voice_node.py"/>

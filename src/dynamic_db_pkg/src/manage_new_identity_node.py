@@ -98,24 +98,24 @@ class NewIdentityHandler():
             else:
                 print("You said nothing!")
             
-            if value is not None and value.lower() == "yes":
-                audio = serialize_audio(np.array(req.audio.data).astype(np.int16))
-                rospy.wait_for_service('store_data_append')
-                try:
-                    audio_save = rospy.ServiceProxy('store_data_append', StoreData)
-                    
-                    resp = audio_save(req.person.data,audio)
-                except rospy.ServiceException as e:
-                    success = False
-                    error = "ERROR: " + e
-                    print("Service call failed: %s"%e)
-                    return success,error
-                if resp.success:
-                    print("Audio added!")
-                else:
-                    return False,resp.error
-                return True, ""
-
+            if value is not None:
+                if value.lower() == "yes":
+                    audio = serialize_audio(np.array(req.audio.data).astype(np.int16))
+                    rospy.wait_for_service('store_data_append')
+                    try:
+                        audio_save = rospy.ServiceProxy('store_data_append', StoreData)
+                        
+                        resp = audio_save(req.person.data,audio)
+                    except rospy.ServiceException as e:
+                        success = False
+                        error = "ERROR: " + e
+                        print("Service call failed: %s"%e)
+                        return success,error
+                    if resp.success:
+                        print("Audio added!")
+                    else:
+                        return False,resp.error
+                    return True, ""
 
             elif value.lower() == "no":
                 return False, "Audio not added!"

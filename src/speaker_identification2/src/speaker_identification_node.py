@@ -80,6 +80,7 @@ class SpeakerReidentification():
 
         self.result_pub.publish(id_label)
         
+        
         # Rejection
         if id_label is None:
             print("Person not recognized!")
@@ -101,7 +102,13 @@ class SpeakerReidentification():
             date,_,name = get_first_date(id_label)
             print("Person recognized {}. We first met time {} at {}".format(name.upper(),date["date"],date["time"]))
             print("Score: {}".format(max_score))
-            save_score = th_max+0.15
+            save_score = th_max
+            occur = len([x for x in y if x == id_label])
+
+            if occur>4:
+                save_score = save_score+0.15
+            elif occur>10:
+                save_score = save_score+0.25
 
             if save_score > 1:
                 save_score = 0.99
@@ -112,13 +119,14 @@ class SpeakerReidentification():
                     resp = self.client.call(String(id_label),audio_data)
                     if not resp.success:
                         print(resp.error)
+                    else:
+                        print("Score >= {}, this audio is now stored in db.".format(save_score))
                 except rospy.ServiceException as e:
                     print("Service call failed: %s"%e)
                 finally:
-                    self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback)
-                    print("Score >= {}, this audio is to be stored in db.".format(save_score))
-                    audio = serialize_audio(np.array(audio_data.data).astype(np.int16))
-                    append_audio(id_label,audio)
+                    self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback) 
+                    #audio = serialize_audio(np.array(audio_data.data).astype(np.int16))
+                    #append_audio(id_label,audio)
      
 
 
