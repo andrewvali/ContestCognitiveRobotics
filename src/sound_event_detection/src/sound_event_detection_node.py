@@ -69,7 +69,7 @@ class SoundEventDetection():
             prediction = self.model.predict(np.expand_dims(data,0))[0]
             max_probability = max(np.expand_dims(prediction[yamnet_classes_id],-1))
 
-            for i in range(0,23):
+            for i in range(0,31):
                 if max_probability == prediction[yamnet_classes_id[i]]:
                     stream_augumented = np.append(stream_augumented,audio.data[i*CHUNK:(i*CHUNK)+CHUNK])
                     break

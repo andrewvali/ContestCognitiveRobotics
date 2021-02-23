@@ -8,7 +8,9 @@ from redis_cli_ros.srv import *
 from io import BytesIO
 import json
 import numpy as np
-
+import time 
+import sys, select
+  
 # Operation utils
 def serialize_audio(original):
 
@@ -28,12 +30,21 @@ class NewIdentityHandler():
     def __init__(self,service):
         rospy.loginfo("Inizializing Server of service AddNewIdentity")
         self.server = rospy.Service(service, ManageAudioIndentityError, self.callback)
-        
+
     def callback(self, req):
         if req.person.data == "?":
             print('Unrecognized person. Do you want add a new identity? Yes or Not')
-            value = input()
-            while(True):
+            
+            value = None
+            print("You have five seconds to answer!")
+            i, o, e = select.select( [sys.stdin], [], [], 5 )
+            if (i):
+                value = sys.stdin.readline().strip()
+                print("You said"+ str(value))
+            else:
+                print("You said nothing!")
+
+            while(value is not None):
                 if value.lower() == "yes":
                     full_name = input("Insert full name: ")
                     rospy.wait_for_service('create_new_identity')
@@ -73,6 +84,12 @@ class NewIdentityHandler():
                 elif value.lower() == "no":
                     print("Person not added!")
                     return True, ""
+                else:
+                    print("Person not added!")
+                    return False, "Warning: I don't undestand!"
+            else:
+                print("Person not added!")
+                return False, "Warning: Time out"
         else:
             return False, "Error: Not implemented yet!"
         
