@@ -40,7 +40,6 @@ class NewIdentityHandler():
             i, o, e = select.select( [sys.stdin], [], [], 5 )
             if (i):
                 value = sys.stdin.readline().strip()
-                print("You said"+ str(value))
             else:
                 print("You said nothing!")
 

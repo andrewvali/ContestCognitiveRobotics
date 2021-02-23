@@ -20,7 +20,6 @@ class Microphone():
     
     # this is called from the background thread
     def callback(self,recognizer, audio):
-        print("Audio Captured by the microphone!")
         data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
         data_to_send = Int16MultiArray()
         data_to_send.data = data

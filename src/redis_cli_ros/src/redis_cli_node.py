@@ -3,12 +3,15 @@ import rospy
 import time
 import redis
 from redis_cli_ros.srv import *
+import sys
 
 class CliRedisService():
 
     def __init__(self):
         try:
-            self.r = redis.Redis(host='localhost', port=6379, db=0)
+            print(sys.argv[1])
+            print(sys.argv[2])
+            self.r = redis.Redis(host=sys.argv[1], port=sys.argv[2], db=0)
         except Exception as ex:
             print("ERROR: "+ str(ex))
             exit(1)
@@ -23,7 +26,7 @@ class CliRedisService():
         try:
             topic= str(request.topic)
             data = str(request.data)
-            print("received topic:'"+topic+"', received data: '"+data+"'")
+            print("received topic:'"+topic+"'")
             
             self.r.lpush(topic, data)
             success = True
@@ -39,7 +42,7 @@ class CliRedisService():
         try:
             topic= str(request.topic)
             data = str(request.data)
-            print("received topic:'"+topic+"', received data: '"+data+"'")
+            print("received topic:'"+topic+"'")
             
             self.r.set(topic, data)
             success = True

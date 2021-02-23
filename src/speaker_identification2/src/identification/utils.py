@@ -154,4 +154,10 @@ def dist2id(distance, y, ths, norm=False, mode='avg', filter_under_th=True):
 
     ids_prob = np.array(ids_prob)
     id_max = np.argmax(ids_prob)
-    return ids[id_max] ,ids_prob[id_max], ths[id_max]
+
+    try:
+        ths_final = ths[id_max]
+    except Exception:
+        ths_final = ths[0]
+    
+    return ids[id_max] ,ids_prob[id_max], ths_final

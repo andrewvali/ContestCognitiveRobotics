@@ -1,0 +1,6 @@
+<launch>
+    
+    <arg name="host" default="localhost"/>
+    <arg name="port" default="6379"/>
+    <node name="redis_cli" pkg="redis_cli_ros" type="redis_cli_node.py" output="screen" args="$(arg host) $(arg port)"/>
+</launch>
