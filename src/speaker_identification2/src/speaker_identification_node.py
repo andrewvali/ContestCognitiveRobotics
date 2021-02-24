@@ -24,7 +24,7 @@ EMBED_PATH=os.path.join(os.path.dirname(__file__),'voice_identities')
 ######### CONSTANT #########
 RATE = 16000
 ######### STORE AUDIO DATA SERVICE #########
-IDENTITY_ADD = StoreAudioService()
+#IDENTITY_ADD = StoreAudioService()
 ######### AUDIO EMBEDDING CREATOR SERVICE #########
 EMBEDDING_CREATOR = CreateEmbedding()
 
@@ -37,7 +37,7 @@ class SpeakerReidentification():
         self.model = get_deep_speaker(SPEAKER_PATH)
         rospy.loginfo("Publisher to topic %s", topic_result)
         self.result_pub = rospy.Publisher(topic_result,String,queue_size=0)
-        rospy.loginfo("Service client to service manage_audio_identity_error")
+        rospy.loginfo("Service client to service manage_audio_identity")
         self.client = rospy.ServiceProxy('manage_audio_identity',ManageAudioIndentityError)
 
     
