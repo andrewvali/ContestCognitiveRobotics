@@ -111,6 +111,8 @@ class NewIdentityHandler():
 
                 elif value.lower() == "no":
                     return False, "Audio not added!"
+                else:
+                    return False, "Audio not added!"
             else:
                 return False, "Warning: I don't undestand!"
         

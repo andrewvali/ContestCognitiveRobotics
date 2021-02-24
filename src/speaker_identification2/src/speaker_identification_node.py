@@ -99,17 +99,8 @@ class SpeakerReidentification():
             date,_,name = get_first_date(id_label)
             print("Person recognized {}. We first met time {} at {}".format(name.upper(),date["date"],date["time"]))
             print("Score: {}".format(max_score))
-            save_score = th_max
-            occur = len([x for x in y if x == id_label])
 
-            if occur>4:
-                save_score = save_score+0.15
-            elif occur>10:
-                save_score = save_score+0.25
-
-            if save_score > 1:
-                save_score = 0.99
-            if max_score >= save_score:
+            if max_score <= th_max+0.04:
                 rospy.wait_for_service('manage_audio_identity')
                 self.microphone_sub.unregister()
                 try:
