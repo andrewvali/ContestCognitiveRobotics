@@ -1,6 +1,0 @@
-string name
----
-bool success
-string error
-string cache_id
-

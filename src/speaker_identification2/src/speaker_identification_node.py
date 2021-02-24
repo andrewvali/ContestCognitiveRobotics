@@ -14,7 +14,6 @@ from dynamic_db_pkg.srv import *
 from std_msgs.msg import String
 from redis_cli_ros.srv import *
 from identification.identities_mng import *
-from identities_add_data import StoreAudioService
 from prep_voice_embeddings import CreateEmbedding
 
 ######### PATH OF THE MODEL #########
@@ -23,8 +22,6 @@ SPEAKER_PATH=os.path.join(os.path.dirname(__file__),'deep_speaker.h5')
 EMBED_PATH=os.path.join(os.path.dirname(__file__),'voice_identities')
 ######### CONSTANT #########
 RATE = 16000
-######### STORE AUDIO DATA SERVICE #########
-#IDENTITY_ADD = StoreAudioService()
 ######### AUDIO EMBEDDING CREATOR SERVICE #########
 EMBEDDING_CREATOR = CreateEmbedding()
 
