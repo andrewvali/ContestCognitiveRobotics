@@ -38,7 +38,7 @@ class SpeakerReidentification():
         rospy.loginfo("Publisher to topic %s", topic_result)
         self.result_pub = rospy.Publisher(topic_result,String,queue_size=0)
         rospy.loginfo("Service client to service manage_audio_identity_error")
-        self.client = rospy.ServiceProxy('manage_audio_identity_error',ManageAudioIndentityError)
+        self.client = rospy.ServiceProxy('manage_audio_identity',ManageAudioIndentityError)
 
     
     def callback(self,audio_data):
@@ -85,7 +85,7 @@ class SpeakerReidentification():
         if id_label is None:
             print("Person not recognized!")
             id_label = "?"
-            rospy.wait_for_service('manage_audio_identity_error')
+            rospy.wait_for_service('manage_audio_identity')
             self.microphone_sub.unregister()
             try:
                 resp = self.client.call(String(id_label),audio_data)
@@ -96,7 +96,7 @@ class SpeakerReidentification():
             except rospy.ServiceException as e:
                 print("Service call failed: %s"%e)
             finally:
-                self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback)
+                self.microphone_sub = rospy.Subscriber('voice_data', Int16MultiArray, self.callback)
 
         else:
             date,_,name = get_first_date(id_label)
@@ -113,7 +113,7 @@ class SpeakerReidentification():
             if save_score > 1:
                 save_score = 0.99
             if max_score >= save_score:
-                rospy.wait_for_service('manage_audio_identity_error')
+                rospy.wait_for_service('manage_audio_identity')
                 self.microphone_sub.unregister()
                 try:
                     resp = self.client.call(String(id_label),audio_data)
@@ -124,7 +124,7 @@ class SpeakerReidentification():
                 except rospy.ServiceException as e:
                     print("Service call failed: %s"%e)
                 finally:
-                    self.microphone_sub = rospy.Subscriber('stream_audio_topic', Int16MultiArray, self.callback) 
+                    self.microphone_sub = rospy.Subscriber('voice_data', Int16MultiArray, self.callback) 
                     #audio = serialize_audio(np.array(audio_data.data).astype(np.int16))
                     #append_audio(id_label,audio)
      
@@ -132,7 +132,7 @@ class SpeakerReidentification():
 
 if __name__ == '__main__':
     rospy.init_node('speaker_reidentification', anonymous=True)
-    sp = SpeakerReidentification('stream_audio_topic','result_topic')
+    sp = SpeakerReidentification('voice_data','result_topic')
     try:
         rospy.spin()
     except KeyboardInterrupt:

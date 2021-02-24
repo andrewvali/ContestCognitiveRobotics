@@ -86,7 +86,7 @@ class SoundEventDetection():
 
 if __name__ == '__main__':
     rospy.init_node("sound_event_detection")
-    sound_event_detection = SoundEventDetection('mic_data','stream_audio_topic')
+    sound_event_detection = SoundEventDetection('mic_data','voice_data')
     try:
         rospy.spin()
     except KeyboardInterrupt:

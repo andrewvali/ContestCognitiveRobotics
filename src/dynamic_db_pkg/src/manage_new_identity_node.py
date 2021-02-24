@@ -128,7 +128,7 @@ class NewIdentityHandler():
 
 if __name__ == '__main__':
     rospy.init_node('dynamic_db_node')
-    im = NewIdentityHandler('manage_audio_identity_error')
+    im = NewIdentityHandler('manage_audio_identity')
     try:
         rospy.spin()
     except KeyboardInterrupt:

@@ -5,7 +5,6 @@ import numpy as np
 
 import time
 import speech_recognition as sr
-from sound_event_detection.srv import SpeechRecognition
 
 ###### CONSTANT #######
 SAMPLE_RATE = 16000
