@@ -34,7 +34,12 @@ The default:
 * host = localhost
 * port = 6379
 ## Run others nodes
-To launch redis-client, open another terminal and run this command:
+To launch:
+* voice_node
+* voice_activity_detection_node
+* speaker_identification_node
+* manage_new_identity_node<br>
+Open another terminal and run this command:
 ```bash
 roslaunch speaker_identification2 identificator_launch.launch
 ```
