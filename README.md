@@ -4,7 +4,10 @@ This is the official repository of Cognitive Robotics exam of University of Sale
 # Group 8
 * [Picariello Emilio](https://github.com/Emilio-Picariello)
 * [Valitutto Andrea](https://github.com/andrewvali/)
-
+# Requirements
+* librosa
+* python_speech_features
+* scipy
 ## Problem Description 
 Implementation of a [ROS]() architecture that identifies the person who is speaking in real time through voice analysis.
 In particular:
