@@ -61,17 +61,18 @@ class SoundEventDetection():
         stream_in_chunk = int(len(ret)/len(ret[:CHUNK]))
                
         stream_augumented = np.array([])
-        for i in range(0,stream_in_chunk):
-            
-            data = preprocess_input(np.fromstring(
-                ret[i*CHUNK:(i*CHUNK)+CHUNK], dtype=np.float32), RATE)
-            prediction = self.model.predict(np.expand_dims(data,0))[0]
-            max_probability = max(np.expand_dims(prediction[yamnet_classes_id],-1))
-            for i in range(0,31):
-                if max_probability == prediction[yamnet_classes_id[i]]:
-                    stream_augumented = np.append(stream_augumented,audio.data[i*CHUNK:(i*CHUNK)+CHUNK])
-                    break
-            
+        if stream_in_chunk!=0:
+            for i in range(0,stream_in_chunk):
+                
+                data = preprocess_input(np.fromstring(
+                    ret[i*CHUNK:(i*CHUNK)+CHUNK], dtype=np.float32), RATE)
+                prediction = self.model.predict(np.expand_dims(data,0))[0]
+                max_probability = max(np.expand_dims(prediction[yamnet_classes_id],-1))
+                for i in range(0,31):
+                    if max_probability == prediction[yamnet_classes_id[i]]:
+                        stream_augumented = np.append(stream_augumented,audio.data[i*CHUNK:(i*CHUNK)+CHUNK])
+                        break
+                
         # stream_augumented is audio with only human speeching
         if len(stream_augumented) !=0:
             print("Recognized human speech or vocal activity")
