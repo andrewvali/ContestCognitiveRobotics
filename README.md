@@ -13,11 +13,13 @@ In particular:
 * [Node 3](https://github.com/andrewvali/ContestCognitiveRobotics/blob/main/src/speaker_identification2/src/speaker_identification_node.py): The Speaker Re-Identification module must allow the recognition of the person who is speaking among those already entered in the database and must allow the display of the name relating to the terminal
 * [Node 4](https://github.com/andrewvali/ContestCognitiveRobotics/blob/main/src/dynamic_db_pkg/src/manage_new_identity_node.py): When the system does not recognize the person who is speaking, it must allow him / her to be entered in the database of people known through a terminal.
 # How to launch a Demo
-## Clone the Repository
+## Clone the Repository and Workspace Setup
 ```bash
 cd ~
 git clone https://github.com/andrewvali/ContestCognitiveRobotics.git
 cd ContestCognitiveRobotics
+catkin build
+source devel/setup.bash
 ```
 ## Run redis server
 To launch redis-server, open a terminal and run this command:<br>
