@@ -16,7 +16,7 @@ This is the official repository of Cognitive Robotics exam of University of Sale
 * pyaudio
 * speechrecognition
 ## Problem Description 
-Implementation of a [ROS]() architecture that identifies the person who is speaking in real time through voice analysis.
+Implementation of a [ROS](https://www.ros.org/) architecture that identifies the person who is speaking in real time through voice analysis.
 In particular:
 * [Node 1](https://github.com/andrewvali/ContestCognitiveRobotics/blob/main/src/voice_detection/src/voice_node.py): The application must capture the audio stream using the built-in microphone in your computer
 * [Node 2](https://github.com/andrewvali/ContestCognitiveRobotics/blob/main/src/sound_event_detection/src/voice_activity_detection_node.py): The VAD module must be able to recognize the voice and distinguish it from other sound events (unlike Speech Recognition which works with energy thresholding)
