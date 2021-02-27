@@ -34,6 +34,15 @@ class NewIdentityHandler():
         self.server = rospy.Service(service, ManageAudioIndentityError, self.callback)
         
     def callback(self, req):
+        """This callback manages the insertion of a new identity and the insertion of 
+            an audio for a specific identity not recognized with certainty by the network 
+
+        Args:
+            req ([type]): request of ManageAudioIdentityError
+
+        Returns:
+            [req.response]: response of the service (bool and string)
+        """
         if req.person.data == "?":
             print('Unrecognized person. Do you want add a new identity? Yes or Not')
             
@@ -47,7 +56,20 @@ class NewIdentityHandler():
 
             while(value is not None):
                 if value.lower() == "yes":
-                    full_name = input("Insert full name: ")
+                    print("\nYou have 20 seconds to answer!")
+                    print("Insert full name: ")
+                    
+                    full_name = None
+                    i, o, e = select.select( [sys.stdin], [], [], 20 )
+                    if (i):
+                        full_name = sys.stdin.readline().strip()
+                    else:
+                        print("You said nothing!")
+                    
+                    if full_name is None:
+                        print("Person not added!")
+                        return False, "Warning: Time out"
+
                     success,error,cacheId= create_new_identity(full_name)
                     if success:
                         cache_id = cacheId

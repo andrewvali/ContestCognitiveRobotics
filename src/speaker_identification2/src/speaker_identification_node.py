@@ -98,9 +98,9 @@ class SpeakerReidentification():
         else:
             date,_,name = get_first_date(id_label)
             print("Person recognized {}. We first met time {} at {}".format(name.upper(),date["date"],date["time"]))
-            print("Score: {}".format(max_score))
+            print("Score: {}\n".format(max_score))
 
-            if max_score <= th_max+0.04:
+            if max_score < th_max+0.10:
                 rospy.wait_for_service('manage_audio_identity')
                 self.microphone_sub.unregister()
                 try:
@@ -108,7 +108,7 @@ class SpeakerReidentification():
                     if not resp.success:
                         print(resp.error)
                     else:
-                        print("Score >= {}, this audio is now stored in db.".format(save_score))
+                        print("Score < 0.65, this audio is now stored in db.\n")
                 except rospy.ServiceException as e:
                     print("Service call failed: %s"%e)
                 finally:
