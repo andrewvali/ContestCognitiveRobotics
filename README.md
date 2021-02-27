@@ -32,6 +32,16 @@ catkin build
 source devel/setup.bash
 ```
 ## Run redis server
+To install redis server run:<br>
+```bash
+sudo apt update
+sudo apt install redis-server
+```
+To install python redis library run:<br>
+```bash
+pip install redis
+```
+
 To launch redis:<br>
 ```bash
 redis-server
