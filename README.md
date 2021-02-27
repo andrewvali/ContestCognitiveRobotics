@@ -8,6 +8,13 @@ This is the official repository of Cognitive Robotics exam of University of Sale
 * librosa
 * python_speech_features
 * scipy
+* redis-serve
+* redis
+* tensorflow
+* numpy
+* sounddevice
+* pyaudio
+* speechrecognition
 ## Problem Description 
 Implementation of a [ROS]() architecture that identifies the person who is speaking in real time through voice analysis.
 In particular:
@@ -25,9 +32,13 @@ catkin build
 source devel/setup.bash
 ```
 ## Run redis server
-To launch redis-server, open a terminal and run this command:<br>
+To launch redis:<br>
 ```bash
-./redis_start.sh
+redis-server
+```
+To launch redis cli interface:<br>
+```bash
+redis-cli
 ```
 ## Run redis client
 To launch redis-client, open another terminal and run this command:
