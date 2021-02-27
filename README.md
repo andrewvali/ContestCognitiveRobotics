@@ -46,11 +46,13 @@ To launch redis:<br>
 ```bash
 redis-server
 ```
-To launch redis cli interface:<br>
+
+## Run redis client
+To launch stand-alone redis cli interface:<br>
 ```bash
 redis-cli
 ```
-## Run redis client
+
 To launch redis-client, open another terminal and run this command:
 ```bash
 roslaunch redis_cli_ros redis_cli_launch.launch host:=*host_service* port:=*service_port*
