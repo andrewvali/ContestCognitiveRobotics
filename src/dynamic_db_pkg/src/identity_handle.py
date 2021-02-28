@@ -10,7 +10,6 @@ from datetime import date as da
 
 
 def create_new_identity(request):
-    #print("Adding '"+request.name+"'...")
     print("Adding ")
     
     try:

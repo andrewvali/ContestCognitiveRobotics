@@ -12,21 +12,21 @@ import pickle
 import numpy as np
 import librosa
 
-librosa.load
-
-
-
 class CreateEmbedding():
 
     __slots__ = 'server'
     def __init__(self):
-        
-       
-        #NewIdentity
+        """
+            It initializes create_embedding service
+        """
         self.server = rospy.Service('create_embedding', CreateAudioEmbedding, self.create_new_embedding )
         print("Audio embeddings creation service has been enabled")
 
     def create_new_embedding(self, request=None):
+        """
+            When called uses redis wrapper services to retrieve json identities and all audio samples,
+            then it creates a new embed.pk file
+        """
         ids_folder=os.path.join(os.path.dirname(__file__),'voice_identities')
         out_path = os.path.join(ids_folder, 'embed.pk')
 
@@ -43,8 +43,6 @@ class CreateEmbedding():
             X = X + audio
             y = y + [cache_id]*len(audio)
             ths = ths + [float(th)]*len(audio)
-
-        #X, y, ths = get_identities(ids_folder, read_file=read_fun)
 
     
         model = get_deep_speaker(os.path.join(os.path.dirname(__file__),'deep_speaker.h5'))

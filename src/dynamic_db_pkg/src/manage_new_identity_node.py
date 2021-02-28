@@ -30,20 +30,19 @@ class NewIdentityHandler():
     __slots__ = 'server'
 
     def __init__(self,service):
+        """
+            It initializes service server of a given name
+        """
         rospy.loginfo("Inizializing Server of service AddNewIdentity")
         self.server = rospy.Service(service, ManageAudioIndentityError, self.callback)
         
     def callback(self, req):
         """This callback manages the insertion of a new identity and the insertion of 
-            an audio for a specific identity not recognized with certainty by the network 
-
-        Args:
-            req ([type]): request of ManageAudioIdentityError
-
-        Returns:
-            [req.response]: response of the service (bool and string)
+            an audio for a specific identity not recognized with certainty by the network.
+            To store new data it uses redis wrapper services 
         """
         if req.person.data == "?":
+            # Handling a new possible identity insertion asking user via terminal
             print('Unrecognized person. Do you want add a new identity? Yes or Not')
             
             value = None
@@ -102,6 +101,7 @@ class NewIdentityHandler():
                 print("Person not added!")
                 return False, "Warning: Time out"
         else:
+            # Handling the new insertion of an audio for specific identity, asking user via terminal
             print('Do you want to add a new audio? Yes or Not')
             
             value = None

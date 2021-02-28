@@ -7,6 +7,9 @@ import rospy
 from redis_cli_ros.srv import *
 
 def get_json(name_file):
+    """
+        It gets json identities from redis wrapper
+    """
 
     rospy.wait_for_service('retrieve_data')
     try:
@@ -32,7 +35,11 @@ def get_json(name_file):
     return json_file
 
 def get_identities():
-    
+    """
+        It gets all identities
+
+    Returns: all identities as a dictionary
+    """
  
     json_file = get_json("identities")
 

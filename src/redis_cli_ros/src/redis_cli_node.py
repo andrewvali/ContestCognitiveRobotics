@@ -8,6 +8,8 @@ import sys
 class CliRedisService():
 
     def __init__(self):
+        """Initialization of redis connection and wrapper services
+        """
         try:
             print(sys.argv[1])
             print(sys.argv[2])
@@ -23,6 +25,15 @@ class CliRedisService():
         rospy.Service('retrieve_data', RetrieveData, self.retrieve_data)
 
     def append_list(self, request):
+        """Appends a string to a list of a given key
+
+        Args:
+            request: according to srv, a string for key and a string for the element to add
+
+        Returns:
+            success: a boolean represents if the operation is successfull
+            error: a string representing a possible error
+        """
         try:
             topic= str(request.topic)
             data = str(request.data)
@@ -39,6 +50,16 @@ class CliRedisService():
             return success, error
             
     def set_data(self, request):
+        """Store a string to a separate record of a given key, creating a new record or 
+            modifying an existing one
+
+        Args:
+            request: according to srv, a string for key and a string for the element to add
+
+        Returns:
+            success: a boolean represents if the operation is successfull
+            error: a string representing a possible error
+        """        
         try:
             topic= str(request.topic)
             data = str(request.data)
@@ -55,6 +76,16 @@ class CliRedisService():
             return success, error
             
     def retrieve_list(self, request):
+        """Retrieves all data from a list of a given key
+
+        Args:
+            request: according to srv, a string for key
+
+        Returns:
+            success: a boolean represents if the operation is successfull
+            error: a string representing a possible error
+            response: retrived list
+        """
         response = ""
         try:
             topic= str(request.topic)
@@ -81,6 +112,16 @@ class CliRedisService():
             return success, error,output
 
     def retrieve_data(self, request):
+        """Retrieves data from a given key
+
+        Args:
+            request: according to srv, a string for key
+
+        Returns:
+            success: a boolean represents if the operation is successfull
+            error: a string representing a possible error
+            response: retrived data
+        """        
         response = ""
         try:
             topic= str(request.topic)
